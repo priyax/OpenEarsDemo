@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="15G1004" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="OpenEarsDemo" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QHU-FQ-M2e">
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="eYc-2T-rv5"/>
+                                    <constraint firstAttribute="height" constant="40" id="kG2-Qi-Hwt"/>
+                                </constraints>
+                                <state key="normal" title="Read Text"/>
+                                <connections>
+                                    <action selector="readRecipe:" destination="BYZ-38-t0r" eventType="touchUpInside" id="cmC-UN-EP3"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CIZ-vD-Fho">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="LeJ-hi-oay"/>
+                                    <constraint firstAttribute="width" constant="100" id="diN-Xh-quU"/>
+                                </constraints>
+                                <state key="normal" title="Listen"/>
+                            </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="nx5-Cj-CF0">
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="536" id="Irl-SN-pgX"/>
+                                    <constraint firstAttribute="width" constant="300" id="bBU-ej-JwO"/>
+                                </constraints>
+                                <mutableString key="text">1. Heat oven to 350°F. Grease and flour two 9-inch round baking pans. Stop.
+2. Stir together sugar, flour, cocoa, baking powder, baking soda and salt in large bowl. Add eggs, milk, oil and vanilla; beat on medium speed of mixer 2 minutes. Stir in boiling water (batter will be thin). Pour batter into prepared pans.Start.
+3. Bake 30 to 35 minutes or until wooden pick inserted in center comes out clean. Cool 10 minutes; remove from pans to wire racks. Cool completely. Frost with "PERFECTLY CHOCOLATE" CHOCOLATE FROSTING. Makes 12 servings.</mutableString>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="CIZ-vD-Fho" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="16" id="A2U-bJ-nub"/>
+                            <constraint firstItem="QHU-FQ-M2e" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="16" id="Ami-cg-mlg"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="nx5-Cj-CF0" secondAttribute="bottom" constant="33" id="MRU-a2-eRM"/>
+                            <constraint firstItem="nx5-Cj-CF0" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="UH4-lr-HOI"/>
+                            <constraint firstItem="QHU-FQ-M2e" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="23" id="YDj-BP-sOU"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="CIZ-vD-Fho" secondAttribute="trailing" constant="22" id="nHl-ko-bOY"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="recipeDisplay" destination="nx5-Cj-CF0" id="jfN-RR-oJZ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="117.59999999999999" y="123.68815592203899"/>
+        </scene>
+    </scenes>
+</document>
