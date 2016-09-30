@@ -35,6 +35,9 @@
                                     <constraint firstAttribute="width" constant="100" id="diN-Xh-quU"/>
                                 </constraints>
                                 <state key="normal" title="Listen"/>
+                                <connections>
+                                    <action selector="listenBtn:" destination="BYZ-38-t0r" eventType="touchUpInside" id="jA2-D7-Hh6"/>
+                                </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="nx5-Cj-CF0">
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

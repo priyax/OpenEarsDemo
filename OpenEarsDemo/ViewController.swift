@@ -8,12 +8,10 @@
 
 import UIKit
 import AVFoundation
-//import OpenEars/OELanguageModelGenerator.h
-//import <OpenEars/OEAcousticModel.h
-//import <OpenEars/OEPocketsphinxController.h>
-//import <OpenEars/OEEventsObserver.h>
+
 class ViewController: UIViewController, OEEventsObserverDelegate {
     @IBOutlet weak var recipeDisplay: UITextView!
+    //Reading Button action
     @IBAction func readRecipe(_ sender: UIButton) {
         
         let test = recipeDisplay.text
@@ -21,11 +19,22 @@ class ViewController: UIViewController, OEEventsObserverDelegate {
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         
         synthesizer.speak(utterance)
+        
         loadOpenEars()
         OEPocketsphinxController.sharedInstance().requestMicPermission()
                
     }
-    var openEarsEventObserver = OEEventsObserver()
+    
+    var openEarsEventObserver = OEEventsObserver()    
+    //Listen and show text
+    @IBAction func listenBtn(_ sender: UIButton) {
+        loadOpenEars()
+        OEPocketsphinxController.sharedInstance().requestMicPermission()
+        
+        
+    }
+    
+    var stoppedListening: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,9 +57,9 @@ class ViewController: UIViewController, OEEventsObserverDelegate {
 
         
         func loadOpenEars() {
+        
             self.openEarsEventObserver = OEEventsObserver()
             self.openEarsEventObserver.delegate = self
-            
             let lmGenerator = OELanguageModelGenerator()
             
             addWords()
@@ -63,19 +72,55 @@ class ViewController: UIViewController, OEEventsObserverDelegate {
             dicPath = lmGenerator.pathToSuccessfullyGeneratedDictionary(withRequestedName: name)
             
             print("lmPath = \(lmPath)")
-             print("dicPath = \(dicPath)")
+            print("dicPath = \(dicPath)")
+            
         }
     
-    func micPermissionCheckCompleted(_ result: Bool) {
+        func micPermissionCheckCompleted(_ result: Bool) {
         print("Permission to use mike \(result)")
+            self.stopListening()
+           // if stoppedListening {}
+            
         if result {
         startListening()
+            }
+        }
+    
+    func startListening() {
+       
+        do {
+//            OEPocketsphinxController.sharedInstance().suspendRecognition()
+//            self.resumeListening()
+            try OEPocketsphinxController.sharedInstance().setActive(true)
+           
+            OEPocketsphinxController.sharedInstance().startListeningWithLanguageModel(atPath: lmPath, dictionaryAtPath: dicPath, acousticModelAtPath: OEAcousticModel.path(toModel: "AcousticModelEnglish"), languageModelIsJSGF: false)
+        } catch let error as NSError {
+            print("Error while startListening: \(error) – \(error.localizedDescription)")
         }
     }
+    
+    func stopListening() {
+        OEPocketsphinxController.sharedInstance().stopListening()
+    }
+    
+    func resumeListening() {
+         OEPocketsphinxController.sharedInstance().resumeRecognition()
+    }
+    
+    func addWords() {
+        //add any thing here that you want to be recognized. Must be in capital letters
+        words.append("START")
+        words.append("STOP")
+        words.append("CONTINUE")
+        words.append("REPEAT")
+    }
+
+    
         func pocketsphinxDidReceiveHypothesis(_ hypothesis: String, recognitionScore: String, utteranceID: String) {
             print("The received hypothesis is \(hypothesis) with a score of \(recognitionScore) and an ID of \(utteranceID)")
-            if hypothesis == "Stop" {
-            synthesizer.
+            if hypothesis == "STOP" {
+            print("The word \(hypothesis) was recognized")
+                
             }
         }
         
@@ -94,6 +139,8 @@ class ViewController: UIViewController, OEEventsObserverDelegate {
         
         func pocketsphinxDidStopListening() {
             print("Pocketsphinx has stopped listening.")
+            stoppedListening = true
+            print("XXXXXXXXXXX \(stoppedListening)")
         }
         
         func pocketsphinxDidSuspendRecognition() {
@@ -120,29 +167,7 @@ class ViewController: UIViewController, OEEventsObserverDelegate {
             print("A test file that was submitted for recognition is now complete.")
         }
         
-        func startListening() {
-            do {
-                try OEPocketsphinxController.sharedInstance().setActive(true)
-                
-                
-                OEPocketsphinxController.sharedInstance().startListeningWithLanguageModel(atPath: lmPath, dictionaryAtPath: dicPath, acousticModelAtPath: OEAcousticModel.path(toModel: "AcousticModelEnglish"), languageModelIsJSGF: false)
-            } catch let error as NSError {
-                print("Error while startListening: \(error) – \(error.localizedDescription)")
-            }
-        }
-        
-        func stopListening() {
-            OEPocketsphinxController.sharedInstance().stopListening()
-        }
-        
-        func addWords() {
-            //add any thing here that you want to be recognized. Must be in capital letters
-            words.append("START")
-            words.append("STOP")
-            words.append("CONTINUE")
-            words.append("REPEAT")
-        }
-        
+    
     
     
 //    
