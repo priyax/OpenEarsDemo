@@ -7,30 +7,46 @@
 //
 
 import UIKit
-import AVFoundation
+//import AVFoundation
 
 class ViewController: UIViewController, OEEventsObserverDelegate {
     @IBOutlet weak var recipeDisplay: UITextView!
+    var openEarsEventObserver = OEEventsObserver()
+    var fliteController = OEFliteController()
+    var slt = Slt()
+    
+    
     //Reading Button action
     @IBAction func readRecipe(_ sender: UIButton) {
         
-        let test = recipeDisplay.text
-        let utterance = AVSpeechUtterance(string: test!)
-        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-        
-        synthesizer.speak(utterance)
-        
         loadOpenEars()
         OEPocketsphinxController.sharedInstance().requestMicPermission()
-               
+        self.fliteController = OEFliteController()
+        self.slt = Slt()
+        
+        self.fliteController.say(recipeDisplay.text, with: self.slt)
+//        let test = recipeDisplay.text
+//        let utterance = AVSpeechUtterance(string: test!)
+//        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+//        
+//        synthesizer.speak(utterance)
+       
+       
+
+        
+        
     }
     
-    var openEarsEventObserver = OEEventsObserver()    
-    //Listen and show text
+    
+    
+    //Listen button action
     @IBAction func listenBtn(_ sender: UIButton) {
+        //Create language model with dictionary of fixed words
         loadOpenEars()
-        OEPocketsphinxController.sharedInstance().requestMicPermission()
-        
+        //To end any previous sessions
+        if OEPocketsphinxController.sharedInstance().isListening {
+            self.stopListening() }
+      OEPocketsphinxController.sharedInstance().requestMicPermission()
         
     }
     
@@ -39,8 +55,6 @@ class ViewController: UIViewController, OEEventsObserverDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
-     
     }
 
     override func didReceiveMemoryWarning() {
@@ -56,46 +70,48 @@ class ViewController: UIViewController, OEEventsObserverDelegate {
         let synthesizer = AVSpeechSynthesizer()
 
         
-        func loadOpenEars() {
+    func loadOpenEars() {
+    
+        self.openEarsEventObserver = OEEventsObserver()
+        self.openEarsEventObserver.delegate = self
+        let lmGenerator = OELanguageModelGenerator()
+        addWords()
         
-            self.openEarsEventObserver = OEEventsObserver()
-            self.openEarsEventObserver.delegate = self
-            let lmGenerator = OELanguageModelGenerator()
-            
-            addWords()
-            
-            let name = "LanguageModelFileStarSaver"
-            lmGenerator.generateLanguageModel(
-                from: words, withFilesNamed: name, forAcousticModelAtPath: OEAcousticModel.path(toModel: ("AcousticModelEnglish")))
-            
-            lmPath = lmGenerator.pathToSuccessfullyGeneratedLanguageModel(withRequestedName: name)
-            dicPath = lmGenerator.pathToSuccessfullyGeneratedDictionary(withRequestedName: name)
-            
-            print("lmPath = \(lmPath)")
-            print("dicPath = \(dicPath)")
-            
-        }
-    
-        func micPermissionCheckCompleted(_ result: Bool) {
-        print("Permission to use mike \(result)")
-            self.stopListening()
-           // if stoppedListening {}
-            
-        if result {
-        startListening()
+        let name = "LanguageModelFileStarSaver"
+        
+        lmGenerator.generateLanguageModel(
+            from: words, withFilesNamed: name, forAcousticModelAtPath: OEAcousticModel.path(toModel: ("AcousticModelEnglish")))
+        
+        lmPath = lmGenerator.pathToSuccessfullyGeneratedLanguageModel(withRequestedName: name)
+        dicPath = lmGenerator.pathToSuccessfullyGeneratedDictionary(withRequestedName: name)
+        
+        
+        print("lmPath = \(lmPath)")
+        print("dicPath = \(dicPath)")
+        
+    }
+
+
+    //functions part of OEEventsObserver Delegate
+    //result of mic permission sent to function
+    func micPermissionCheckCompleted(_ result: Bool) {
+    print("Permission to use this mike \(result)")
+        
+            if result {
+                
+                startListening()
             }
-        }
-    
+      }
+
+    //Activate listening with OEPocketSphinxController
     func startListening() {
+   
+    do {
+        try OEPocketsphinxController.sharedInstance().setActive(true)
        
-        do {
-//            OEPocketsphinxController.sharedInstance().suspendRecognition()
-//            self.resumeListening()
-            try OEPocketsphinxController.sharedInstance().setActive(true)
-           
-            OEPocketsphinxController.sharedInstance().startListeningWithLanguageModel(atPath: lmPath, dictionaryAtPath: dicPath, acousticModelAtPath: OEAcousticModel.path(toModel: "AcousticModelEnglish"), languageModelIsJSGF: false)
+        OEPocketsphinxController.sharedInstance().startListeningWithLanguageModel(atPath: lmPath, dictionaryAtPath: dicPath, acousticModelAtPath: OEAcousticModel.path(toModel: "AcousticModelEnglish"), languageModelIsJSGF: false)
         } catch let error as NSError {
-            print("Error while startListening: \(error) – \(error.localizedDescription)")
+        print("Error while startListening: \(error) – \(error.localizedDescription)")
         }
     }
     
@@ -118,10 +134,11 @@ class ViewController: UIViewController, OEEventsObserverDelegate {
     
         func pocketsphinxDidReceiveHypothesis(_ hypothesis: String, recognitionScore: String, utteranceID: String) {
             print("The received hypothesis is \(hypothesis) with a score of \(recognitionScore) and an ID of \(utteranceID)")
-            if hypothesis == "STOP" {
+           
             print("The word \(hypothesis) was recognized")
+                //recipeDisplay.text = hypothesis
                 
-            }
+            
         }
         
         func pocketsphinxDidStartListening() {
@@ -141,6 +158,7 @@ class ViewController: UIViewController, OEEventsObserverDelegate {
             print("Pocketsphinx has stopped listening.")
             stoppedListening = true
             print("XXXXXXXXXXX \(stoppedListening)")
+            self.resumeListening()
         }
         
         func pocketsphinxDidSuspendRecognition() {
